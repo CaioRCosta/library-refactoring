@@ -1,8 +1,7 @@
 class Book:
-
-    REGULAR: int = 0
-    NEW_RELEASE: int = 1
-    CHILDREN: int = 2
+    REGULAR = 0
+    NEW_RELEASE = 1
+    CHILDREN = 2
 
     def __init__(self, title: str, price_code: int):
         self.title = title
@@ -16,7 +15,6 @@ class Rental:
 
 
 class Client:
-
     def __init__(self, name: str):
         self.name = name
         self.rentals = []
@@ -24,27 +22,28 @@ class Client:
     def add_rental(self, rental: Rental):
         self.rentals.append(rental)
 
+    def get_charge(self, rental: Rental) -> float:
+        amount = 0
+        # Lógica movida do statement para cá
+        if rental.book.price_code == Book.REGULAR:
+            amount += 2
+            if rental.days_rented > 2:
+                amount += (rental.days_rented - 2) * 1.5
+        elif rental.book.price_code == Book.NEW_RELEASE:
+            amount += rental.days_rented * 3
+        elif rental.book.price_code == Book.CHILDREN:
+            amount += 1.5
+            if rental.days_rented > 3:
+                amount += (rental.days_rented - 3) * 1.5
+        return amount
 
     def statement(self) -> str:
-
         total_amount = 0
         frequent_renter_points = 0
         result = f"Rental summary for {self.name}\n"
         
         for rental in self.rentals:
-            amount = 0
-            
-            # determine amounts for each line
-            if rental.book.price_code == Book.REGULAR:
-                amount += 2
-                if rental.days_rented > 2:
-                    amount += (rental.days_rented - 2) * 1.5
-            elif rental.book.price_code == Book.NEW_RELEASE:
-                amount += rental.days_rented * 3
-            elif rental.book.price_code == Book.CHILDREN:
-                amount += 1.5
-                if rental.days_rented > 3:
-                    amount += (rental.days_rented - 3) * 1.5
+            amount = self.get_charge(rental)
 
             # add frequent renter points
             frequent_renter_points += 1
